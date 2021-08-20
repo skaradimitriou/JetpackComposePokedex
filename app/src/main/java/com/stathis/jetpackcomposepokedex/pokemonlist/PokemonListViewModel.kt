@@ -1,4 +1,4 @@
-package com.stathis.jetpackcomposepokedex.pokemonList
+package com.stathis.jetpackcomposepokedex.pokemonlist
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
