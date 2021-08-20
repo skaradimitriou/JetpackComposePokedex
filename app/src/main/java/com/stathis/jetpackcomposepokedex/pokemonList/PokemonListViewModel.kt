@@ -13,6 +13,7 @@ import com.stathis.jetpackcomposepokedex.network.PokemonApiClient
 import com.stathis.jetpackcomposepokedex.util.Constants.PAGE_SIZE
 import com.stathis.jetpackcomposepokedex.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -29,8 +30,41 @@ class PokemonListViewModel @Inject constructor(
     var isLoading = mutableStateOf(false)
     var endReached = mutableStateOf(false)
 
+    private var cachedPokemonList = listOf<PokedexListEntry>()
+    private var isSearchStating = true
+    var isSearching = mutableStateOf(false)
+
     init {
         loadPokemonPaginated()
+    }
+
+    fun searchPokemonList(query : String){
+        val listToSearch = if(isSearchStating){
+            pokemonList.value
+        } else {
+            cachedPokemonList
+        }
+
+        viewModelScope.launch(Dispatchers.Default){
+            if(query.isEmpty()){
+                pokemonList.value = cachedPokemonList
+                isSearching.value = false
+                isSearchStating = true
+                return@launch
+            }
+            val results = listToSearch.filter {
+                it.pokemonName.contains(query.trim(), ignoreCase = true) ||
+                        it.number.toString() == query.trim()
+            }
+
+            if(isSearchStating){
+                cachedPokemonList = pokemonList.value
+                isSearchStating = false
+            }
+
+            pokemonList.value = results
+            isSearching.value = true
+        }
     }
 
     fun loadPokemonPaginated() {
