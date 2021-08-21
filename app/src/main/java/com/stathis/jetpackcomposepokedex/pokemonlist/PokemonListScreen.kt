@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltNavGraphViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
+import coil.compose.rememberImagePainter
+
 import coil.request.ImageRequest
-import com.google.accompanist.coil.CoilImage
 import com.stathis.jetpackcomposepokedex.R
 import com.stathis.jetpackcomposepokedex.data.models.PokedexListEntry
 
@@ -186,26 +186,20 @@ fun PokedexEntry(
             }
     ) {
         Column {
-            CoilImage(
-                request = ImageRequest.Builder(LocalContext.current)
-                    .data(entry.imageUrl)
+            Image(
+                painter = rememberImagePainter(request = ImageRequest.Builder(LocalContext.current)
+                    .data(entry.imageUrl?: "")
                     .target {
                         viewModel.calcDominantColor(it) { color ->
                             dominantColor = color
                         }
                     }
-                    .build(),
+                    .build()),
                 contentDescription = entry.pokemonName,
-                fadeIn = true,
                 modifier = Modifier
                     .size(120.dp)
                     .align(CenterHorizontally)
-            ) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier.scale(0.5f)
-                )
-            }
+            )
             Text(
                 text = entry.pokemonName,
                 fontSize = 20.sp,

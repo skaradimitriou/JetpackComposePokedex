@@ -1,5 +1,5 @@
 package com.stathis.jetpackcomposepokedex.data
 
 data class GenerationV(
-    val black-white: BlackWhite
+    val black_white: BlackWhite
 )
